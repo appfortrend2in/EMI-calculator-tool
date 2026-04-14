@@ -1,134 +1,97 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Finance Calculator App</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Advanced Finance Calculator</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
 body {
   font-family: Arial;
-  background:#f2f2f2;
-  text-align:center;
+  background: #f2f2f2;
+  text-align: center;
 }
 
 .app {
-  background:white;
-  padding:20px;
-  max-width:400px;
-  margin:auto;
-  border-radius:10px;
-  box-shadow:0 0 10px rgba(0,0,0,0.1);
+  background: white;
+  padding: 20px;
+  margin: 20px;
+  border-radius: 10px;
 }
 
 input {
-  width:90%;
-  padding:10px;
-  margin:5px;
+  width: 90%;
+  padding: 12px;
+  margin: 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
 }
 
 button {
-  width:100%;
-  padding:12px;
-  background:#007bff;
-  color:white;
-  border:none;
-  margin-top:10px;
+  width: 95%;
+  padding: 12px;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
 }
 
-.tabs button {
-  width:48%;
-  margin:1%;
-  background:#ddd;
-  color:black;
-}
-
-.tab {
-  display:none;
-}
-
-.tab.active {
-  display:block;
-}
-
-.footer {
-  margin-top:30px;
-  font-size:14px;
-  color:gray;
+.result {
+  margin-top: 15px;
+  text-align: left;
 }
 </style>
-
 </head>
 
 <body>
 
 <div class="app">
+  <h2>💰 Advanced EMI Calculator</h2>
 
-<h2>💰 Finance Calculator</h2>
+  <input id="amount" placeholder="Loan Amount ₹">
+  <input id="rate" placeholder="Interest Rate (%)">
+  <input id="months" placeholder="Tenure (Months)">
+  
+  <input id="fee" placeholder="Processing Fee (%)">
+  <input id="fileCharge" placeholder="File Charge ₹">
+  <input id="insurance" placeholder="Insurance ₹">
 
-<div class="tabs">
-<button onclick="showTab('emi')">EMI</button>
-<button onclick="showTab('eligibility')">Eligibility</button>
+  <button onclick="calculateEMI()">Calculate EMI</button>
+
+  <div class="result" id="result"></div>
 </div>
 
-<!-- EMI TAB -->
-<div id="emi" class="tab active">
-
-<input id="amount" placeholder="Loan Amount ₹">
-<input id="rate" placeholder="Interest Rate %">
-<input id="months" placeholder="Tenure (Months)">
-
-<button onclick="calculateEMI()">Calculate EMI</button>
-
-<div id="emiResult"></div>
-
-</div>
-
-<!-- ELIGIBILITY TAB -->
-<div id="eligibility" class="tab">
-
-<input id="salary" placeholder="Monthly Salary ₹">
-<input id="existing" placeholder="Existing EMI ₹">
-
-<button onclick="checkEligibility()">Check Loan</button>
-
-<div id="eligibilityResult"></div>
-
-</div>
-
-</div>
-
-<!-- FOOTER -->
-<div class="footer">
-  Powered by <b>राकेश खुडिया</b>
-</div>
+<p style="color:gray;">Powered by राकेश खुडिया, रावला मंडी</p>
 
 <script>
-function showTab(tab){
-  document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
-  document.getElementById(tab).classList.add("active");
-}
-
-function calculateEMI(){
+function calculateEMI() {
   let P = parseFloat(document.getElementById("amount").value);
-  let R = parseFloat(document.getElementById("rate").value)/12/100;
+  let R = parseFloat(document.getElementById("rate").value) / 12 / 100;
   let N = parseFloat(document.getElementById("months").value);
 
-  let emi = (P*R*Math.pow(1+R,N))/(Math.pow(1+R,N)-1);
+  let feePercent = parseFloat(document.getElementById("fee").value) || 0;
+  let fileCharge = parseFloat(document.getElementById("fileCharge").value) || 0;
+  let insurance = parseFloat(document.getElementById("insurance").value) || 0;
 
-  document.getElementById("emiResult").innerHTML =
-  "<h3>EMI: ₹" + emi.toFixed(0) + "</h3>";
-}
+  let processingFee = (P * feePercent) / 100;
 
-function checkEligibility(){
-  let salary = parseFloat(document.getElementById("salary").value);
-  let existing = parseFloat(document.getElementById("existing").value) || 0;
+  let finalLoan = P + processingFee + fileCharge + insurance;
 
-  let available = (salary * 0.5) - existing;
-  let loan = available * 20;
+  let emi = (finalLoan * R * Math.pow(1 + R, N)) / (Math.pow(1 + R, N) - 1);
 
-  document.getElementById("eligibilityResult").innerHTML =
-  "<h3>Eligible EMI: ₹" + available.toFixed(0) + "</h3>" +
-  "<h3>Estimated Loan: ₹" + loan.toFixed(0) + "</h3>";
+  let totalPayment = emi * N;
+  let totalInterest = totalPayment - finalLoan;
+
+  document.getElementById("result").innerHTML =
+    "<b>📊 Loan Breakdown</b><br>" +
+    "Loan Amount: ₹" + P + "<br>" +
+    "Processing Fee: ₹" + processingFee.toFixed(0) + "<br>" +
+    "File Charge: ₹" + fileCharge + "<br>" +
+    "Insurance: ₹" + insurance + "<br>" +
+    "<hr>" +
+    "<b>Total Loan: ₹" + finalLoan.toFixed(0) + "</b><br><br>" +
+    "<b>📅 EMI: ₹" + emi.toFixed(0) + "</b><br>" +
+    "Total Payment: ₹" + totalPayment.toFixed(0) + "<br>" +
+    "Total Interest: ₹" + totalInterest.toFixed(0);
 }
 </script>
 
